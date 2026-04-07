@@ -379,7 +379,7 @@ class INDEXES
                 $c1_id = $getID;
             } else {
                 $mysql['c1'] = $db->real_escape_string($c1);
-                $c1_sql = "SELECT c1_id FROM 202_clicks_c1 WHERE c1='" . $mysql['c1'] . "'";
+                $c1_sql = "SELECT c1_id FROM 202_tracking_c1 WHERE c1='" . $mysql['c1'] . "'";
                 $c1_result = _mysqli_query($c1_sql);
                 $c1_row = $c1_result->fetch_assoc();
                 if ($c1_row['c1_id']) {
@@ -389,7 +389,7 @@ class INDEXES
                     $setID = setCache(md5("c1-id" . $c1 . systemHash()), $c1_id, $time);
                 } else {
                     //insert c1
-                    $c1_sql = "INSERT INTO 202_clicks_c1 SET c1='" . $mysql['c1'] . "'";
+                    $c1_sql = "INSERT INTO 202_tracking_c1 SET c1='" . $mysql['c1'] . "'";
                     $c1_result = _mysqli_query($c1_sql);
                     $c1_id = $db->insert_id;
                     // add to memcached
@@ -398,7 +398,7 @@ class INDEXES
             }
         } else {
             $mysql['c1'] = $db->real_escape_string($c1);
-            $c1_sql = "SELECT c1_id FROM 202_clicks_c1 WHERE c1='" . $mysql['c1'] . "'";
+            $c1_sql = "SELECT c1_id FROM 202_tracking_c1 WHERE c1='" . $mysql['c1'] . "'";
             $c1_result = _mysqli_query($c1_sql);
             $c1_row = $c1_result->fetch_assoc();
             if ($c1_row['c1_id']) {
@@ -406,7 +406,7 @@ class INDEXES
                 $c1_id = $c1_row['c1_id'];
             } else {
                 //insert c1
-                $c1_sql = "INSERT INTO 202_clicks_c1 SET c1='" . $mysql['c1'] . "'";
+                $c1_sql = "INSERT INTO 202_tracking_c1 SET c1='" . $mysql['c1'] . "'";
                 $c1_result = _mysqli_query($c1_sql);
                 $c1_id = $db->insert_id;
             }
@@ -435,7 +435,7 @@ class INDEXES
                 $c2_id = $getID;
             } else {
                 $mysql['c2'] = $db->real_escape_string($c2);
-                $c2_sql = "SELECT c2_id FROM 202_clicks_c2 WHERE c2='" . $mysql['c2'] . "'";
+                $c2_sql = "SELECT c2_id FROM 202_tracking_c2 WHERE c2='" . $mysql['c2'] . "'";
                 $c2_result = _mysqli_query($c2_sql);
                 $c2_row = $c2_result->fetch_assoc();
                 if ($c2_row['c2_id']) {
@@ -445,7 +445,7 @@ class INDEXES
                     $setID = setCache(md5("c2-id" . $c2 . systemHash()), $c2_id, $time);
                 } else {
                     //insert c2
-                    $c2_sql = "INSERT INTO 202_clicks_c2 SET c2='" . $mysql['c2'] . "'";
+                    $c2_sql = "INSERT INTO 202_tracking_c2 SET c2='" . $mysql['c2'] . "'";
                     $c2_result = _mysqli_query($c2_sql);
                     $c2_id = $db->insert_id;
                     // add to memcached
@@ -454,7 +454,7 @@ class INDEXES
             }
         } else {
             $mysql['c2'] = $db->real_escape_string($c2);
-            $c2_sql = "SELECT c2_id FROM 202_clicks_c2 WHERE c2='" . $mysql['c2'] . "'";
+            $c2_sql = "SELECT c2_id FROM 202_tracking_c2 WHERE c2='" . $mysql['c2'] . "'";
             $c2_result = _mysqli_query($c2_sql);
             $c2_row = $c2_result->fetch_assoc();
             if ($c2_row['c2_id']) {
@@ -462,7 +462,7 @@ class INDEXES
                 $c2_id = $c2_row['c2_id'];
             } else {
                 //insert c2
-                $c2_sql = "INSERT INTO 202_clicks_c2 SET c2='" . $mysql['c2'] . "'";
+                $c2_sql = "INSERT INTO 202_tracking_c2 SET c2='" . $mysql['c2'] . "'";
                 $c2_result = _mysqli_query($c2_sql);
                 $c2_id = $db->insert_id;
             }
@@ -491,7 +491,7 @@ class INDEXES
                 $c3_id = $getID;
             } else {
                 $mysql['c3'] = $db->real_escape_string($c3);
-                $c3_sql = "SELECT c3_id FROM 202_clicks_c3 WHERE c3='" . $mysql['c3'] . "'";
+                $c3_sql = "SELECT c3_id FROM 202_tracking_c3 WHERE c3='" . $mysql['c3'] . "'";
                 $c3_result = _mysqli_query($c3_sql);
                 $c3_row = $c3_result->fetch_assoc();
                 if ($c3_row['c3_id']) {
@@ -501,7 +501,7 @@ class INDEXES
                     $setID = setCache(md5("c3-id" . $c3 . systemHash()), $c3_id, $time);
                 } else {
                     //insert c3
-                    $c3_sql = "INSERT INTO 202_clicks_c3 SET c3='" . $mysql['c3'] . "'";
+                    $c3_sql = "INSERT INTO 202_tracking_c3 SET c3='" . $mysql['c3'] . "'";
                     $c3_result = _mysqli_query($c3_sql);
                     $c3_id = $db->insert_id;
                     // add to memcached
@@ -510,7 +510,7 @@ class INDEXES
             }
         } else {
             $mysql['c3'] = $db->real_escape_string($c3);
-            $c3_sql = "SELECT c3_id FROM 202_clicks_c3 WHERE c3='" . $mysql['c3'] . "'";
+            $c3_sql = "SELECT c3_id FROM 202_tracking_c3 WHERE c3='" . $mysql['c3'] . "'";
             $c3_result = _mysqli_query($c3_sql);
             $c3_row = $c3_result->fetch_assoc();
             if ($c3_row['c3_id']) {
@@ -518,7 +518,7 @@ class INDEXES
                 $c3_id = $c3_row['c3_id'];
             } else {
                 //insert c3
-                $c3_sql = "INSERT INTO 202_clicks_c3 SET c3='" . $mysql['c3'] . "'";
+                $c3_sql = "INSERT INTO 202_tracking_c3 SET c3='" . $mysql['c3'] . "'";
                 $c3_result = _mysqli_query($c3_sql);
                 $c3_id = $db->insert_id;
             }
@@ -547,7 +547,7 @@ class INDEXES
                 $c4_id = $getID;
             } else {
                 $mysql['c4'] = $db->real_escape_string($c4);
-                $c4_sql = "SELECT c4_id FROM 202_clicks_c4 WHERE c4='" . $mysql['c4'] . "'";
+                $c4_sql = "SELECT c4_id FROM 202_tracking_c4 WHERE c4='" . $mysql['c4'] . "'";
                 $c4_result = _mysqli_query($c4_sql);
                 $c4_row = $c4_result->fetch_assoc();
                 if ($c4_row['c4_id']) {
@@ -557,7 +557,7 @@ class INDEXES
                     $setID = setCache(md5("c4-id" . $c4 . systemHash()), $c4_id, $time);
                 } else {
                     //insert c4
-                    $c4_sql = "INSERT INTO 202_clicks_c4 SET c4='" . $mysql['c4'] . "'";
+                    $c4_sql = "INSERT INTO 202_tracking_c4 SET c4='" . $mysql['c4'] . "'";
                     $c4_result = _mysqli_query($c4_sql);
                     $c4_id = $db->insert_id;
                     // add to memcached
@@ -566,7 +566,7 @@ class INDEXES
             }
         } else {
             $mysql['c4'] = $db->real_escape_string($c4);
-            $c4_sql = "SELECT c4_id FROM 202_clicks_c4 WHERE c4='" . $mysql['c4'] . "'";
+            $c4_sql = "SELECT c4_id FROM 202_tracking_c4 WHERE c4='" . $mysql['c4'] . "'";
             $c4_result = _mysqli_query($c4_sql);
             $c4_row = $c4_result->fetch_assoc();
             if ($c4_row['c4_id']) {
@@ -574,7 +574,7 @@ class INDEXES
                 $c4_id = $c4_row['c4_id'];
             } else {
                 //insert c4
-                $c4_sql = "INSERT INTO 202_clicks_c4 SET c4='" . $mysql['c4'] . "'";
+                $c4_sql = "INSERT INTO 202_tracking_c4 SET c4='" . $mysql['c4'] . "'";
                 $c4_result = _mysqli_query($c4_sql);
                 $c4_id = $db->insert_id;
             }

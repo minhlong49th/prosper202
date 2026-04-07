@@ -10,10 +10,12 @@ if (!file_exists(__DIR__ . '/version.php')) {
 require_once(__DIR__ . '/version.php');
 
 $_GET = array_change_key_case($_GET, CASE_LOWER);
-//fix for nginx with no server name set
+//fix for nginx with no server name set or CLI environments
+$_SERVER['SERVER_NAME'] = $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST'] ?? 'localhost';
 if ($_SERVER['SERVER_NAME'] == '_') {
-    $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'];
+    $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'] ?? 'localhost';
 }
+$_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
 
 DEFINE('ROOT_PATH', substr(__DIR__, 0, -10));
 DEFINE('CONFIG_PATH', __DIR__);
@@ -2398,7 +2400,7 @@ function getIspData($ip)
 
 function systemHash(): string
 {
-    $hash = hash('ripemd160', $_SERVER['HTTP_HOST'] . $_SERVER['SERVER_ADDR']);
+    $hash = hash('ripemd160', ($_SERVER['HTTP_HOST'] ?? 'localhost') . ($_SERVER['SERVER_ADDR'] ?? '127.0.0.1'));
     return $hash;
 }
 
@@ -2537,7 +2539,8 @@ function record_mysql_error($dbOrSql, $sql = null): never
     $ip_id = INDEXES::get_ip_id($ipForError);
     $mysql['ip_id'] = $db->real_escape_string($ip_id);
 
-    $site_url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
+    $site_url = $protocol . ($_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost') . $_SERVER['REQUEST_URI'];
     $site_id = INDEXES::get_site_url_id($site_url);
     $mysql['site_id'] = $db->real_escape_string($site_id);
 
