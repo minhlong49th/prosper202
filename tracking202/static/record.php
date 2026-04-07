@@ -5,7 +5,7 @@ header('P3P: CP="Prosper202 does not have a P3P policy"');
 include_once(substr(__DIR__, 0,-19) . '/202-config/connect2.php'); 
  
 //lets find out if this is an advance or simple landing page, so we can include the appropriate script for each
-$landing_page_id_public = $_GET['lpip'];
+$landing_page_id_public = $_GET['lpip'] ?? '';
 $mysql['landing_page_id_public'] = $db->real_escape_string($landing_page_id_public);
 $tracker_sql = "SELECT  landing_page_type
 				FROM      202_landing_pages

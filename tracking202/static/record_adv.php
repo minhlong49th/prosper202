@@ -32,6 +32,19 @@ $_GET += [
 	'utm_content' => '',
 	'referer' => '',
 	'ua' => $_SERVER['HTTP_USER_AGENT'] ?? '',
+	// Legacy keyword parameters accessed in the "searched" switch-case
+	'search_word' => '',
+	'query' => '',
+	'encquery' => '',
+	'terms' => '',
+	'rdata' => '',
+	'qs' => '',
+	'wd' => '',
+	'text' => '',
+	'szukaj' => '',
+	'qt' => '',
+	'k' => '',
+	'words' => '',
 ];
 
 $landing_page_id_public = $_GET['lpip'];
