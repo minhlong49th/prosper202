@@ -52,7 +52,7 @@ function logged_in_redirect($safe_context = false)
 
 	// Default: redirect to account dashboard
 	prosper_log('login', 'Redirecting to account dashboard.');
-	header('location: ' . get_absolute_url() . '202-account');
+	header('location: ' . get_absolute_url() . '202-account/');
 	exit;
 }
 

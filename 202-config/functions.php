@@ -2,6 +2,7 @@
 
 use GuzzleHttp\json_decode;
 
+include_once(__DIR__ . '/version.php');
 include_once(__DIR__ . '/functions-upgrade.php');
 
 // Add ipAddress function

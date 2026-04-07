@@ -62,8 +62,15 @@ DEFINE('TRACKING202_ADS_URL', 'https://ads.tracking202.com');
 DEFINE('DASHBOARD_API_URL', 'https://my.tracking202.com/api/v1');
 DEFINE('DASHBOARD_CACHE_TTL', 3600); // 1 hour
 
-//fix for nginx with no server name set
-if ($_SERVER['SERVER_NAME'] == '_') {
+// Proxy fixes for Host and HTTPS
+if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') {
+    $_SERVER['HTTPS'] = 'on';
+}
+
+if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+    $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
+    $_SERVER['HTTP_HOST'] = $_SERVER['HTTP_X_FORWARDED_HOST'];
+} else if (!empty($_SERVER['HTTP_HOST'])) {
     $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'];
 }
 

@@ -79,7 +79,7 @@ $success = false;
 				}
 
 				//for each real campaign selected, display the code to be used for it
-				$outbound_go = '//' . getTrackingDomain() . get_absolute_url(). 'tracking202/redirect/go.php?acip=' . $aff_campaign_row['aff_campaign_id_public'];
+				$outbound_go = getTrackingProtocol() . getTrackingDomain() . get_absolute_url(). 'tracking202/redirect/go.php?acip=' . $aff_campaign_row['aff_campaign_id_public'];
 
 				$html['$outbound_go'] = htmlentities($outbound_go);
 				printf('</br><textarea class="form-control" rows="1" style="background-color: #f5f5f5; font-size: 12px;">%s</textarea>', $html['$outbound_go']);
@@ -97,7 +97,7 @@ $success = false;
 //                       
 // -------------------------------------------------------------------
 			  
-$tracking202outbound = \'//'. getTrackingDomain() . get_absolute_url().'tracking202/redirect/off.php?acip='.$aff_campaign_row['aff_campaign_id_public'].'&pci=\'.$_COOKIE[\'tracking202pci\']; 
+$tracking202outbound = \''. getTrackingProtocol() . getTrackingDomain() . get_absolute_url().'tracking202/redirect/off.php?acip='.$aff_campaign_row['aff_campaign_id_public'].'&pci=\'.$_COOKIE[\'tracking202pci\']; 
 			 
 header(\'location: \'.$tracking202outbound);
 			  
@@ -117,7 +117,7 @@ header(\'location: \'.$tracking202outbound);
 				$rotator_row = $rotator_result->fetch_assoc();
 
 				//for each real campaign selected, display the code to be used for it
-				$outbound_go = '//' . getTrackingDomain() . get_absolute_url().'tracking202/redirect/go.php?rpi=' . $rotator_row['public_id'];
+				$outbound_go = getTrackingProtocol() . getTrackingDomain() . get_absolute_url().'tracking202/redirect/go.php?rpi=' . $rotator_row['public_id'];
 
 				$html['$outbound_go'] = htmlentities($outbound_go);
 				printf('</br><textarea class="form-control" rows="1" style="background-color: #f5f5f5; font-size: 12px;">%s</textarea>', $html['$outbound_go']);
@@ -135,7 +135,7 @@ header(\'location: \'.$tracking202outbound);
 //                       
 // -------------------------------------------------------------------
 			  
-$tracking202outbound = \'//'. getTrackingDomain() . get_absolute_url().'tracking202/redirect/offrtr.php?rpi='.$rotator_row['public_id'].'\'; 
+$tracking202outbound = \''. getTrackingProtocol() . getTrackingDomain() . get_absolute_url().'tracking202/redirect/offrtr.php?rpi='.$rotator_row['public_id'].'\'; 
 			 
 header(\'location: \'.$tracking202outbound);
 			  

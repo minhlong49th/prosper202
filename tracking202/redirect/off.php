@@ -44,10 +44,10 @@ else { //if not find the list clicks id of the ip within a 30 day range
 
     $click_result1 = $db->query($click_sql1) or record_mysql_error($click_sql1);
     $click_row1 = $click_result1->fetch_assoc();
-    $mysql['click_id'] = $db->real_escape_string((string)$click_row1['click_id']);
+    $mysql['click_id'] = $db->real_escape_string((string)($click_row1['click_id'] ?? ''));
     $click_id = $mysql['click_id'];
-    $mysql['ppc_account_id'] = $db->real_escape_string((string)$click_row1['ppc_account_id']);
-    $mysql['click_id_public'] = $db->real_escape_string($click_row1['click_id_public']);
+    $mysql['ppc_account_id'] = $db->real_escape_string((string)($click_row1['ppc_account_id'] ?? ''));
+    $mysql['click_id_public'] = $db->real_escape_string((string)($click_row1['click_id_public'] ?? ''));
     $pci=$mysql['click_id_public'];
 
 }

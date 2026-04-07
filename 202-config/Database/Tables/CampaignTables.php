@@ -48,6 +48,7 @@ final class CampaignTables
                 `aff_campaign_url_5` text DEFAULT NULL,
                 `aff_campaign_payout` decimal(8,2) NOT NULL,
                 `aff_campaign_cloaking` tinyint(1) NOT NULL DEFAULT '0',
+                `attribution_model_id` int(11) DEFAULT NULL,
                 `aff_campaign_time` int(10) unsigned NOT NULL,
                 `aff_campaign_rotate` tinyint(1) NOT NULL DEFAULT '0',
                 `aff_campaign_currency` char(3) NOT NULL DEFAULT 'USD',
@@ -58,7 +59,8 @@ final class CampaignTables
                 KEY `user_id` (`user_id`),
                 KEY `aff_campaign_name` (`aff_campaign_name`(5)),
                 KEY `aff_campaign_id_public` (`aff_campaign_id_public`),
-                KEY `aff_campaign_id` (`aff_campaign_id`,`aff_campaign_name`)
+                KEY `aff_campaign_id` (`aff_campaign_id`,`aff_campaign_name`),
+                KEY `idx_attribution_model` (`attribution_model_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
         );
     }

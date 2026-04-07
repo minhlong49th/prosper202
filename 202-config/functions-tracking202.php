@@ -34,7 +34,7 @@ function record_mysql_error($dbOrSql, $sql = null): never
     $mysql['user_id'] = isset($_SESSION['user_id']) ? $db->real_escape_string(strip_tags((string) $_SESSION['user_id'])) : 0;
     $mysql['mysql_error_text'] = $db->real_escape_string($clean['mysql_error_text']);
     $mysql['mysql_error_sql'] = $db->real_escape_string($sql);
-    $mysql['script_url'] = $db->real_escape_string(strip_tags((string) $_SERVER['SCRIPT_URL']));
+    $mysql['script_url'] = $db->real_escape_string(strip_tags((string) ($_SERVER['SCRIPT_URL'] ?? $_SERVER['REQUEST_URI'] ?? '')));
     $mysql['server_name'] = $db->real_escape_string(strip_tags((string) $_SERVER['SERVER_NAME']));
     $mysql['mysql_error_time'] = time();
 
@@ -3803,6 +3803,16 @@ function getSecureStatus(): bool
 }
 
 /**
+ * Return the protocol prefix ('https://' or 'http://') based on the current request.
+ *
+ * @return string 'https://' when the connection is secure, 'http://' otherwise.
+ */
+function getTrackingProtocol(): string
+{
+    return getSecureStatus() ? 'https://' : 'http://';
+}
+
+/**
  * Generate the inbound JavaScript loader snippet for landing page tracking.
  *
  * @param string $landing_page_id_public The public landing page ID
@@ -3818,7 +3828,7 @@ function generateTrackingLoaderSnippet(string $landing_page_id_public): string
 			upxf.parentNode.insertBefore(if202, upxf);
 		};
 		var t = new URLSearchParams(window.location.search).get("t202id") || "";
-		load("//' . getTrackingDomain() . get_absolute_url() . 'tracking202/static/landing.php?lpip=' . $landing_page_id_public . '&t202id=" + encodeURIComponent(t), "upxif");
+		load("' . getTrackingProtocol() . getTrackingDomain() . get_absolute_url() . 'tracking202/static/landing.php?lpip=' . $landing_page_id_public . '&t202id=" + encodeURIComponent(t), "upxif");
 	}(document, "script"));
 	</script>';
 }
