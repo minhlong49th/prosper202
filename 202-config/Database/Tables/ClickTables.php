@@ -30,6 +30,7 @@ final class ClickTables
             self::clicksVariable(),
             self::clicksRotator(),
             self::clicksTotal(),
+            self::clicksImpressions(),
         ];
     }
 
@@ -221,6 +222,26 @@ final class ClickTables
             "CREATE TABLE IF NOT EXISTS `" . TableRegistry::CLICKS_TOTAL . "` (
                 `click_count` int(20) unsigned NOT NULL default '0',
                 PRIMARY KEY (`click_count`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
+        );
+    }
+
+    public static function clicksImpressions(): SchemaDefinition
+    {
+        return SchemaBuilder::fromRawSql(
+            TableRegistry::CLICKS_IMPRESSIONS,
+            "CREATE TABLE IF NOT EXISTS `" . TableRegistry::CLICKS_IMPRESSIONS . "` (
+                `impression_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+                `click_id` bigint(20) unsigned DEFAULT NULL,
+                `aff_campaign_id` mediumint(8) unsigned NOT NULL,
+                `landing_page_id` mediumint(8) unsigned NOT NULL,
+                `ppc_account_id` mediumint(8) unsigned NOT NULL,
+                `text_ad_id` mediumint(8) unsigned NOT NULL,
+                `impression_time` int(10) unsigned NOT NULL,
+                PRIMARY KEY (`impression_id`),
+                KEY `click_id` (`click_id`),
+                KEY `landing_page_id` (`landing_page_id`),
+                KEY `impression_time` (`impression_time`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
         );
     }

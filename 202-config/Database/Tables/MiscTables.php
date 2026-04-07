@@ -43,6 +43,7 @@ final class MiscTables
             self::dirtyHours(),
             self::sortBreakdowns(),
             self::charts(),
+            self::summaryOverview(),
             // Export tables
             self::exportAdgroups(),
             self::exportCampaigns(),
@@ -404,6 +405,21 @@ final class MiscTables
                 `data` text NOT NULL,
                 `chart_time_range` varchar(255) NOT NULL DEFAULT '',
                 KEY `user_id` (`user_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
+        );
+    }
+
+    public static function summaryOverview(): SchemaDefinition
+    {
+        return SchemaBuilder::fromRawSql(
+            TableRegistry::SUMMARY_OVERVIEW,
+            "CREATE TABLE IF NOT EXISTS `" . TableRegistry::SUMMARY_OVERVIEW . "` (
+                `user_id` mediumint(8) unsigned NOT NULL,
+                `aff_campaign_id` mediumint(8) unsigned NOT NULL,
+                `ppc_account_id` mediumint(8) unsigned NOT NULL,
+                `click_time` int(10) unsigned NOT NULL,
+                PRIMARY KEY (`user_id`,`aff_campaign_id`,`ppc_account_id`,`click_time`),
+                KEY `click_time` (`click_time`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci"
         );
     }

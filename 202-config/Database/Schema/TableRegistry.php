@@ -49,6 +49,7 @@ final class TableRegistry
     public const string CLICKS_VARIABLE = '202_clicks_variable';
     public const string CLICKS_ROTATOR = '202_clicks_rotator';
     public const string CLICKS_TOTAL = '202_clicks_total';
+    public const string CLICKS_IMPRESSIONS = '202_clicks_impressions';
 
     // Tracking tables
     public const string TRACKING_C1 = '202_tracking_c1';
@@ -142,6 +143,7 @@ final class TableRegistry
     public const string DIRTY_HOURS = '202_dirty_hours';
     public const string SORT_BREAKDOWNS = '202_sort_breakdowns';
     public const string CHARTS = '202_charts';
+    public const string SUMMARY_OVERVIEW = '202_summary_overview';
 
     // DNI tables
     public const string DNI_NETWORKS = '202_dni_networks';
