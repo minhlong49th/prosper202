@@ -264,6 +264,15 @@ template_top('Get Trackers');  ?>
 			</div>
 
 			<div class="form-group" style="margin-bottom: 0px;">
+				<label class="col-xs-4 control-label" for="google_ads_param" style="text-align: left;">Add Google Ads Param:</label>
+				<div class="col-xs-6" style="margin-top: 10px;">
+					<label class="checkbox">
+						<input type="checkbox" name="google_ads_param" id="google_ads_param" value="1" data-toggle="checkbox">
+					</label>
+				</div>
+			</div>
+
+			<div class="form-group" style="margin-bottom: 0px;">
 				<label class="col-xs-4 control-label" for="t202kw" style="text-align: left;">Keyword Token:</label>
 				<div class="col-xs-6" style="margin-top: 10px;">
 					<input class="form-control input-sm" type="text" name="t202kw" id="t202kw" />

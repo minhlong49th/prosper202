@@ -238,6 +238,10 @@ $html = [];
     //remove & from end of the variable
     $tracking_variable_string=rtrim($tracking_variable_string,'&');
 
+	if (isset($_POST['google_ads_param']) && $_POST['google_ads_param'] == '1') {
+		$tracking_variable_string .= '&utm_source=google&utm_medium={network}&utm_term={keyword}&utm_content={creative}&utm_campaign={campaignid}&device={device}&matchtype={matchtype}';
+	}
+
 
 	if ($slack) {
 		$editTracker = !empty($_POST['edit_tracker']);
