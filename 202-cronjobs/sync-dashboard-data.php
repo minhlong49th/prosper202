@@ -10,6 +10,8 @@
  */
 
 declare(strict_types=1);
+exit("Dashboard sync is disabled.\n");
+
 
 // Include required files
 include_once(str_repeat("../", 1) . '202-config/connect.php');
