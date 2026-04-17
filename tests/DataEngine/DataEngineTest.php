@@ -17,11 +17,19 @@ use PHPUnit\Framework\TestCase;
  */
 final class DataEngineTest extends TestCase
 {
+    private string $source;
+
+    protected function setUp(): void
+    {
+        $source = file_get_contents(__DIR__ . '/../../202-config/class-dataengine-slim.php');
+        self::assertNotFalse($source, 'class-dataengine-slim.php must be readable');
+        $this->source = $source;
+    }
+
     // --- setDirtyHour SQL structure ---
 
     public function testSetDirtyHourInsertSelectJoinsAllRequiredTables(): void
     {
-        // The SQL in setDirtyHour must JOIN all these tables for complete reporting
         $requiredJoins = [
             '202_clicks',
             '202_clicks_record',
@@ -53,14 +61,10 @@ final class DataEngineTest extends TestCase
             '202_landing_pages',
         ];
 
-        // Read the actual SQL from the source file
-        $source = file_get_contents(__DIR__ . '/../../202-config/class-dataengine-slim.php');
-        self::assertNotFalse($source);
-
         foreach ($requiredJoins as $table) {
             self::assertStringContainsString(
                 $table,
-                $source,
+                $this->source,
                 "setDirtyHour SQL must JOIN $table for complete report aggregation"
             );
         }
@@ -68,16 +72,12 @@ final class DataEngineTest extends TestCase
 
     public function testSetDirtyHourInsertColumnsMatchSelectColumns(): void
     {
-        $source = file_get_contents(__DIR__ . '/../../202-config/class-dataengine-slim.php');
-
-        // Extract INSERT columns
-        preg_match('/insert into 202_dataengine\(([^)]+)\)/s', $source, $insertMatch);
+        preg_match('/insert into 202_dataengine\(([^)]+)\)/s', $this->source, $insertMatch);
         self::assertNotEmpty($insertMatch, 'Must find INSERT INTO 202_dataengine(...)');
 
         $insertColumns = array_map('trim', explode(',', $insertMatch[1]));
         $insertColumns = array_map(fn($c) => preg_replace('/\s+/', '', $c), $insertColumns);
 
-        // Must include these critical columns for reporting
         $criticalColumns = [
             'user_id', 'click_id', 'click_time',
             'aff_campaign_id', 'aff_network_id',
@@ -98,20 +98,15 @@ final class DataEngineTest extends TestCase
 
     public function testSetDirtyHourUsesOnDuplicateKeyUpdate(): void
     {
-        $source = file_get_contents(__DIR__ . '/../../202-config/class-dataengine-slim.php');
-
         self::assertStringContainsString(
             'on duplicate key update',
-            strtolower($source),
+            strtolower($this->source),
             'Must use ON DUPLICATE KEY UPDATE to handle reconversion'
         );
     }
 
     public function testDuplicateKeyUpdateRefreshesRevenueFields(): void
     {
-        $source = file_get_contents(__DIR__ . '/../../202-config/class-dataengine-slim.php');
-
-        // These fields must be updated on duplicate to reflect reconversions
         $updatedFields = [
             'click_lead', 'click_filtered', 'click_bot', 'click_out',
             'leads', 'payout', 'income', 'cost',
@@ -121,7 +116,7 @@ final class DataEngineTest extends TestCase
         foreach ($updatedFields as $field) {
             self::assertStringContainsString(
                 "$field=values($field)",
-                strtolower($source),
+                strtolower($this->source),
                 "ON DUPLICATE KEY UPDATE must refresh $field"
             );
         }
@@ -131,23 +126,18 @@ final class DataEngineTest extends TestCase
 
     public function testIncomeCalculationOnlyCountsLeads(): void
     {
-        $source = file_get_contents(__DIR__ . '/../../202-config/class-dataengine-slim.php');
-
-        // Income should only be counted when click_lead > 0
         self::assertStringContainsString(
             'IF (2c.click_lead>0,2c.click_payout,0) AS income',
-            $source,
+            $this->source,
             'Income must be conditional on click_lead > 0'
         );
     }
 
     public function testCostIsCpcValue(): void
     {
-        $source = file_get_contents(__DIR__ . '/../../202-config/class-dataengine-slim.php');
-
         self::assertStringContainsString(
             '2c.click_cpc AS cost',
-            $source,
+            $this->source,
             'Cost must come from click_cpc'
         );
     }
@@ -156,12 +146,9 @@ final class DataEngineTest extends TestCase
 
     public function testEmptyClickIdReturnsEarly(): void
     {
-        $source = file_get_contents(__DIR__ . '/../../202-config/class-dataengine-slim.php');
-
-        // The function must check for empty click_id and return false
         self::assertStringContainsString(
             "return false",
-            $source,
+            $this->source,
             'Empty click_id must cause early return'
         );
     }
@@ -170,11 +157,9 @@ final class DataEngineTest extends TestCase
 
     public function testDataEngineSetsMysqlTimezone(): void
     {
-        $source = file_get_contents(__DIR__ . '/../../202-config/class-dataengine-slim.php');
-
         self::assertStringContainsString(
             'SET time_zone',
-            $source,
+            $this->source,
             'DataEngine must set MySQL timezone for correct time-based aggregation'
         );
     }
@@ -183,20 +168,15 @@ final class DataEngineTest extends TestCase
 
     public function testClickIdIsDirectlyInterpolatedInSql(): void
     {
-        $source = file_get_contents(__DIR__ . '/../../202-config/class-dataengine-slim.php');
-
-        // The click_id is interpolated directly: WHERE 2c.click_id=" . $click_id
-        // This is safe only if $click_id is validated as integer upstream
         self::assertStringContainsString(
             '$click_id',
-            $source,
+            $this->source,
             'click_id is interpolated — must be validated upstream'
         );
 
-        // Verify that the click_id goes through real_escape_string when derived from DB
         self::assertStringContainsString(
             'real_escape_string',
-            $source,
+            $this->source,
             'Click ID from DB lookup must be escaped'
         );
     }

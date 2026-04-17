@@ -61,7 +61,7 @@ final class MysqlConversionRepositoryExpandedTest extends TestCase
         [$repo] = $this->buildRepo($write);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Click not found');
+        $this->expectExceptionMessage('Click not found or not owned by user');
         $repo->create(1, ['click_id' => 999]);
     }
 
@@ -74,7 +74,7 @@ final class MysqlConversionRepositoryExpandedTest extends TestCase
         [$repo] = $this->buildRepo($write);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Click not found');
+        $this->expectExceptionMessage('Click not found or not owned by user');
         $repo->create(1, ['click_id' => 10]);
     }
 

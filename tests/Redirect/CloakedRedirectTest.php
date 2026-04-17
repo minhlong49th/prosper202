@@ -134,7 +134,7 @@ final class CloakedRedirectTest extends TestCase
 
     public function testCampaignNameInHtmlTitleCouldCauseXss(): void
     {
-        // cl.php echoes campaign name directly: <?php echo $html['aff_campaign_name']; ?>
+        // cl.php echoes campaign name directly without escaping
         // This is a potential XSS vector if campaign name contains HTML
         $maliciousName = '<script>alert("xss")</script>';
         $safe = htmlspecialchars($maliciousName, ENT_QUOTES, 'UTF-8');
@@ -146,7 +146,7 @@ final class CloakedRedirectTest extends TestCase
 
     public function testRedirectUrlInMetaRefreshCouldCauseInjection(): void
     {
-        // cl.php: <meta http-equiv="refresh" content="0; url=<?php echo $redirect_site_url; ?>">
+        // cl.php outputs redirect URL in meta refresh without escaping
         $maliciousUrl = '"><script>alert(1)</script>';
         $safe = htmlspecialchars($maliciousUrl, ENT_QUOTES, 'UTF-8');
 
