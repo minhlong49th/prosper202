@@ -234,7 +234,7 @@ function _mysqli_query($dbOrSql, $sql = null)
 // our own die, that will display the them around the error message
 function _die($message, ...$legacyArgs): never
 {
-    echo htmlspecialchars((string) $message, ENT_QUOTES, 'UTF-8');
+    echo $message;
     die();
 }
 

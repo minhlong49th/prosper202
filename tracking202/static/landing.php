@@ -106,8 +106,7 @@ var _params = new URLSearchParams(window.location.search);
 
 function t202GetVar(name) {
 	var values = _params.getAll(name);
-	var result = values.join(', ');
-	return result.replace(/\+/g, ' ');
+	return values.join(', ');
 }
 
 function t202Enc(e) {
@@ -180,7 +179,7 @@ var utm_campaign = t202GetVar('utm_campaign');
 	var parts = [
 		"<?php echo $baseUrl; ?>tracking202/static/record.php?lpip=" + t202Enc(lpip),
 		"t202id=" + t202Enc(t202id),
-		"t202kw=" + t202kw,
+		"t202kw=" + t202Enc(t202kw),
 		"t202ref=" + t202Enc(t202ref),
 		"OVRAW=" + t202Enc(t202GetVar('OVRAW')),
 		"OVKEY=" + t202Enc(t202GetVar('OVKEY')),
@@ -207,11 +206,14 @@ var utm_campaign = t202GetVar('utm_campaign');
 	}
 
 	// Inject record.php as script — its response calls createCookie() to set tracking cookies
-	var js202a = document.createElement("script");
-	js202a.src = parts.join("&");
-	js202a.async = true;
-	js202a.id = "recjs";
-	(document.head || document.getElementsByTagName("script")[0].parentNode).appendChild(js202a);
+	// Guard prevents double-firing when landing.php is embedded more than once (SPA, duplicate snippet)
+	if (!document.getElementById('recjs')) {
+		var js202a = document.createElement("script");
+		js202a.src = parts.join("&");
+		js202a.async = true;
+		js202a.id = "recjs";
+		(document.head || document.getElementsByTagName("script")[0].parentNode).appendChild(js202a);
+	}
 })();
 
 // --- Dynamic content replacement ---
