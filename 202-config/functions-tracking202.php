@@ -48,7 +48,7 @@ function record_mysql_error($dbOrSql, $sql = null): never
     $report_query = _mysqli_query($report_sql);
 
     // email administration of the error
-    $to = $_SERVER['SERVER_ADMIN'];
+    $to = $_SERVER['SERVER_ADMIN'] ?? 'webmaster@localhost';
     $subject = 'mysql error reported - ' . $site_url;
     $message = '<b>A mysql error has been reported</b><br/><br/>
 		
@@ -64,7 +64,7 @@ function record_mysql_error($dbOrSql, $sql = null): never
 					_mysqli_query: ' . $sql . '<br/><br/>
 					 
 					mysql_error: ' . $clean['mysql_error_text'];
-    $from = $_SERVER['SERVER_ADMIN'];
+    $from = $_SERVER['SERVER_ADMIN'] ?? 'webmaster@localhost';
     $type = 3; // type 3 is mysql_error
 
     // send_email($to,$subject,$message,$from,$type);
@@ -1359,17 +1359,17 @@ function query(
     // set show preferences
     if ($pref_show == true) {
         if ($user_row['user_pref_show'] == 'filtered') {
-            $click_sql .= " AND click_filtered='1' ";
-            $count_where .= " AND click_filtered='1' ";
+            $click_sql .= " AND $db_table.click_filtered='1' ";
+            $count_where .= " AND $db_table.click_filtered='1' ";
         } elseif ($user_row['user_pref_show'] == 'real') {
-            $click_sql .= " AND click_filtered='0' ";
-            $count_where .= " AND click_filtered='0' ";
+            $click_sql .= " AND $db_table.click_filtered='0' ";
+            $count_where .= " AND $db_table.click_filtered='0' ";
         } elseif ($user_row['user_pref_show'] == 'leads') {
-            $click_sql .= " AND click_filtered='0' AND click_lead='1' ";
-            $count_where .= " AND click_filtered='0' AND click_lead='1' ";
+            $click_sql .= " AND $db_table.click_filtered='0' AND $db_table.click_lead='1' ";
+            $count_where .= " AND $db_table.click_filtered='0' AND $db_table.click_lead='1' ";
         } elseif ($user_row['user_pref_show'] == 'filtered_bot') {
-            $click_sql .= " AND click_bot='1'";
-            $count_where .= " AND click_bot='1'";
+            $click_sql .= " AND $db_table.click_bot='1'";
+            $count_where .= " AND $db_table.click_bot='1'";
         }
     }
 

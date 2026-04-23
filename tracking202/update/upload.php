@@ -1,16 +1,17 @@
 <?php
 declare(strict_types=1);
-include_once(substr(__DIR__, 0,-19) . '/202-config/connect.php'); 
-include_once(substr(__DIR__, 0,-19) . '/202-config/class-dataengine-slim.php');
+include_once(substr(__DIR__, 0, -19) . '/202-config/connect.php');
+include_once(substr(__DIR__, 0, -19) . '/202-config/class-dataengine-slim.php');
 
 AUTH::require_user();
 
 if (!$userObj->hasPermission("access_to_update_section")) {
-	header('location: '.get_absolute_url().'tracking202/');
+	header('location: ' . get_absolute_url() . 'tracking202/');
 	die();
 }
 
-function about_revenue_upload() { 
+function about_revenue_upload()
+{
 
 	echo '<div class="row">
 			<div class="col-xs-12">
@@ -28,46 +29,48 @@ function about_revenue_upload() {
 
 $upload_dir = __DIR__ . '/reports/';
 
-$case = isset($_GET['case']) ? (int)$_GET['case'] : 0;
+$case = isset($_GET['case']) ? (int) $_GET['case'] : 0;
 
 switch ($case) {
 
 	case 1:
-		
+
 		#else it worked ok, save the csv to file, and then ask them what fields are what
 		$file = $upload_dir . $_GET['file'];
 		if (!file_exists($file)) {
-			template_top('Upload Revenue Reports'); 
+			template_top('Upload Revenue Reports');
 			about_revenue_upload();
 			echo '<div class="error"><small><span class="fui-alert"></span>This file does not exist that you are trying to import<br/>or you have already successfully uploaded it.</small></div>';
 			template_bottom();
 			die();
 		}
-		
-		
-		template_top('Upload Revenue Reports'); 
+
+
+		template_top('Upload Revenue Reports');
 		about_revenue_upload();
-			echo '<div class="row">
+		echo '<div class="row">
 					<div class="col-xs-12">
-						<form enctype="application/x-www-form-urlencoded" action="'.get_absolute_url().'tracking202/update/upload.php" method="get">';
-					echo '<input type="hidden" name="case" value="2"/>';
-					echo '<input type="hidden" name="file" value="'.$_GET['file'].'"/>';
-				echo '<table class="table table-bordered" id="stats-table">';
-				echo '<tr>';
-					echo '<th>Column Name</th>';
-					echo '<th>Subid Column</th>';
-					echo '<th>Commission Column</th>';
-				echo '<tr/>';
-			 
-			
-		$handle = fopen($file, 'rb'); 	
+						<form enctype="application/x-www-form-urlencoded" action="' . get_absolute_url() . 'tracking202/update/upload.php" method="get">';
+		echo '<input type="hidden" name="case" value="2"/>';
+		echo '<input type="hidden" name="file" value="' . $_GET['file'] . '"/>';
+		echo '<table class="table table-bordered" id="stats-table">';
+		echo '<tr>';
+		echo '<th>Column Name</th>';
+		echo '<th>Subid Column</th>';
+		echo '<th>Commission Column</th>';
+		echo '<th>Order Date Column</th>';
+		echo '</tr>';
+
+
+		$handle = fopen($file, 'rb');
 		$row = @fgetcsv($handle, 100000, ",", escape: '\\');
-		for ($x = 0; $x < count($row); $x++) { 
+		for ($x = 0; $x < count($row); $x++) {
 			$html = array_map(htmlentities(...), $row);
-			echo '<tr>';	
-				echo '<td>'.$html[$x].'</td>';
-				echo '<td><label class="radio" style="display: inline;"><input type="radio" data-toggle="radio" name="click_id" value="'.$x.'"/></label</td>';
-				echo '<td><label class="radio" style="display: inline;"><input type="radio" data-toggle="radio" name="click_payout" value="'.$x.'"/></label></td>';
+			echo '<tr>';
+			echo '<td>' . $html[$x] . '</td>';
+			echo '<td><label class="radio" style="display: inline;"><input type="radio" data-toggle="radio" name="click_id" value="' . $x . '"/></label></td>';
+			echo '<td><label class="radio" style="display: inline;"><input type="radio" data-toggle="radio" name="click_payout" value="' . $x . '"/></label></td>';
+			echo '<td><label class="radio" style="display: inline;"><input type="radio" data-toggle="radio" name="order_date" value="' . $x . '"/></label></td>';
 			echo '</tr>';
 		}
 		echo '</table>';
@@ -80,80 +83,86 @@ switch ($case) {
 		echo '</div></div>';
 		template_bottom();
 		break;
-		 
+
 	case 2:
-		
-		if ( (!is_numeric($_GET['click_id'])) or (!is_numeric($_GET['click_payout'])) ) { 
-			
+
+		if ((!is_numeric($_GET['click_id'])) or (!is_numeric($_GET['click_payout'])) or (!isset($_GET['order_date']))) {
+
 			$file = $_GET['file'];
-			template_top('Upload Revenue Reports'); 
+			template_top('Upload Revenue Reports');
 			about_revenue_upload();
-			echo '<div class="error"><small><span class="fui-alert"></span>You forgot to check the subid and the commission column, <a href="'.get_absolute_url().'tracking202/update/upload.php?case=1&file='.$file.'">please try again</a></small></div>';
+			echo '<div class="error"><small><span class="fui-alert"></span>You forgot to check the subid and the commission column, <a href="' . get_absolute_url() . 'tracking202/update/upload.php?case=1&file=' . $file . '">please try again</a></small></div>';
 			template_bottom();
 			die();
-			
+
 		}
-		
+
 		$file = $upload_dir . $_GET['file'];
 		if (!file_exists($file)) {
-			template_top('Upload Revenue Reports'); 
+			template_top('Upload Revenue Reports');
 			about_revenue_upload();
 			echo '<div class="error"><small><span class="fui-alert"></span>This file does not exist that you are trying to import or you have already successfully uploaded it.</small></div>';
 			template_bottom();
 			die();
 		}
-		
+
 		$click_payouts = [];
-		
-		$handle = fopen($file, 'rb'); 
-		
+		$click_order_dates = [];
+
+		$handle = fopen($file, 'rb');
+
 		$de = new DataEngine();
-		
+
 		while ($row = @fgetcsv($handle, 100000, ",", escape: '\\')) {
-			
+
 			#store all the subid values and payouts
-			$click_id = $row[ $_GET['click_id'] ];
-			$click_payout = $row[ $_GET['click_payout'] ];
-			$click_payout = str_replace('$','', $click_payout);
-			
-			if (is_numeric($click_id)) { 
-			
-				if (!$click_payouts[$click_id]) 	$click_payouts[$click_id] = $click_payout;
-				else 							$click_payouts[$click_id] = $click_payout + $click_payouts[$click_id];
-				
+			$click_id = $row[$_GET['click_id']];
+			$click_payout = $row[$_GET['click_payout']];
+			$click_payout = str_replace('$', '', $click_payout);
+
+			if (is_numeric($click_id)) {
+
+				if (!isset($click_payouts[$click_id]))
+					$click_payouts[$click_id] = $click_payout;
+				else
+					$click_payouts[$click_id] = $click_payout + $click_payouts[$click_id];
+
+				$click_order_dates[$click_id] = isset($_GET['order_date']) ? trim($row[$_GET['order_date']]) : '';
+
 				#now upload each row into prosper202 and update the subids accordingly
-				$mysql['user_id'] = $db->real_escape_string((string)$_SESSION['user_id']);
+				$mysql['user_id'] = $db->real_escape_string((string) $_SESSION['user_id']);
 				$mysql['click_id'] = $db->real_escape_string($click_id);
 				$mysql['click_payout'] = $db->real_escape_string($click_payouts[$click_id]);
+				$mysql['click_order_date'] = $db->real_escape_string($click_order_dates[$click_id]);
 				$mysql['click_update_time'] = time();
 				$mysql['click_update_type'] = 'upload';
-				
-				$update_sql = "UPDATE 202_clicks SET click_lead='1', `click_filtered`='0', `click_payout`='".$mysql['click_payout']."' WHERE click_id='" . $mysql['click_id'] ."' AND user_id='".$mysql['user_id']."'";
+
+				$update_sql = "UPDATE 202_clicks SET click_lead='1', `click_filtered`='0', `click_payout`='" . $mysql['click_payout'] . "', `click_order_date`='" . $mysql['click_order_date'] . "' WHERE click_id='" . $mysql['click_id'] . "' AND user_id='" . $mysql['user_id'] . "'";
 				$update_result = _mysqli_query($update_sql);
-		
+
 				$update_sql = "
 					UPDATE 202_clicks_spy
 					SET
 						click_lead='1',
 						`click_filtered`='0',
-						`click_payout`='".$mysql['click_payout']."'
+						`click_payout`='" . $mysql['click_payout'] . "'
 					WHERE
-						click_id='" . $mysql['click_id'] ."'
-						AND user_id='".$mysql['user_id']."'
+						click_id='" . $mysql['click_id'] . "'
+						AND user_id='" . $mysql['user_id'] . "'
 				";
-				
+
 				$de->setDirtyHour($mysql['click_id']);
 				$update_result = _mysqli_query($update_sql);
 			}
 		}
-		
-		#update is now complete, delete the .csv
-		unlink ($file);
 
-		
-		template_top('Upload Revenue Reports'); 
+		#update is now complete, delete the .csv
+		unlink($file);
+
+
+		template_top('Upload Revenue Reports');
 		about_revenue_upload();
-			echo '<div class="row">
+		echo '<div class="row">
 					<div class="col-xs-12">
 					<div class="success"><small><span class="fui-check-inverted"></span>Your report has been uploaded successfully</small></div><br/>
 					<small>The subids have been marked and set accordingly:</small>
@@ -162,38 +171,41 @@ switch ($case) {
 					<tr>
 						<th>SUBID</th>
 						<th>COMMISSION</th>
+						<th>ORDER DATE</th>
 					</tr>';
-			foreach( $click_payouts as $key => $row ) {
-				printf("<tr>
+		foreach ($click_payouts as $key => $row) {
+			printf("<tr>
 							<td>%s</td>
 							<td>$%s</td>
-					     </tr>", $key,  $row);
-			}  
-			echo '</table>';
-			echo '</div></div>';  
+							<td>%s</td>
+					     </tr>", $key, $row, isset($click_order_dates[$key]) ? $click_order_dates[$key] : '');
+		}
+		echo '</table>';
+		echo '</div></div>';
 		template_bottom();
-		
+
 		break;
-		
+
 	default:
-		
-		if ($_SERVER['REQUEST_METHOD'] == 'POST') { 
-			
+
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
 			// Initialize error variable
 			$error = false;
-			
+
 			// Check if file was uploaded properly
 			if (!isset($_FILES['csv']) || !isset($_FILES['csv']['tmp_name']) || empty($_FILES['csv']['tmp_name'])) {
 				$error = true;
 			}
-			
+
 			if (!$error) {
 				//get file extension, checks to see if the image file, if not, do not allow to upload the file
 				$pext = getFileExtension($_FILES['csv']['name']);
-				$pext = strtolower((string) $pext); 
-				if (($pext != "txt") and ($pext !="csv")) $error = true;
+				$pext = strtolower((string) $pext);
+				if (($pext != "txt") and ($pext != "csv"))
+					$error = true;
 			}
-			
+
 			$handle = false;
 			if (!$error) {
 				//open the tmp file, that was uploaded, the csv
@@ -203,25 +215,26 @@ switch ($case) {
 					$error = true;
 				}
 			}
-			
+
 			if (!$error && $handle !== false) {
 				//this counter, will help us determine the first row of the array
 				$row = @fgetcsv($handle, 100000, ",", escape: '\\');
-				
+
 				#if there was no row detected, an error occured on this uploaded
-				if (!$row) $error = true;
-				
+				if (!$row)
+					$error = true;
+
 				// Close the handle since we're done with the initial check
 				fclose($handle);
 			}
-			
-			if (!$error) { 
-			
+
+			if (!$error) {
+
 				#now write the csv to the reports folder
 				$handle = fopen($tmp_name, "rb");
 				if ($handle !== false) {
 					$data = fread($handle, 100000);
-					$file = random_int(0,100) . time() . random_int(0,100) .'.csv';
+					$file = random_int(0, 100) . time() . random_int(0, 100) . '.csv';
 					$newHandle = fopen($upload_dir . $file, 'w');
 					if ($newHandle !== false) {
 						fwrite($newHandle, $data);
@@ -233,48 +246,52 @@ switch ($case) {
 				} else {
 					$error = true;
 				}
-				
-				header('location: '.get_absolute_url().'tracking202/update/upload.php?case=1&file='.$file); die();
+
+				header('location: ' . get_absolute_url() . 'tracking202/update/upload.php?case=1&file=' . $file);
+				die();
 			}
 		}
-		
-		template_top('Upload Revenue Reports'); 
+
+		template_top('Upload Revenue Reports');
 		about_revenue_upload();
-			
+
 		//check to see if the directory is writable
-		if ( !is_writable(  $upload_dir )) {
-			
-			echo '<table cellspacing="1" cellpadding="4" class="upload-table"><tr><td>'. "<div class='error'>Sorry, I can't write to the directory: ". $upload_dir  ." <br/>In order to upload Revenue reports we need to be able to write to this directory, you'll need to modify the permissions.</div></td></tr></table>";
-			template_bottom(); die();
+		if (!is_writable($upload_dir)) {
+
+			echo '<table cellspacing="1" cellpadding="4" class="upload-table"><tr><td>' . "<div class='error'>Sorry, I can't write to the directory: " . $upload_dir . " <br/>In order to upload Revenue reports we need to be able to write to this directory, you'll need to modify the permissions.</div></td></tr></table>";
+			template_bottom();
+			die();
 		} ?>
-		 
+
 		<div class="row">
 			<div class="col-xs-12">
-				<form enctype="multipart/form-data" action="<?php echo get_absolute_url();?>tracking202/update/upload.php" method="post" class="form-horizontal" role="form">
-					<input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>" /> 
+				<form enctype="multipart/form-data" action="<?php echo get_absolute_url(); ?>tracking202/update/upload.php"
+					method="post" class="form-horizontal" role="form">
+					<input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>" />
 					<div class="col-xs-3">
 						<label for="csv">Upload Commission Report:</label>
 					</div>
 
 					<div class="col-xs-8" style="margin-left: 20px;">
 						<div class="form-group">
-				          <div class="fileinput fileinput-new" data-provides="fileinput">
-								<span class="btn btn-default btn-embossed btn-file">					  	
-								<span class="fileinput-new"><span class="fui-upload"></span>&nbsp;&nbsp;Attach File</span>
-								<span class="fileinput-exists"><span class="fui-gear"></span>&nbsp;&nbsp;Change</span>
-								<input type="file" name="csv" id="csv">
+							<div class="fileinput fileinput-new" data-provides="fileinput">
+								<span class="btn btn-default btn-embossed btn-file">
+									<span class="fileinput-new"><span class="fui-upload"></span>&nbsp;&nbsp;Attach File</span>
+									<span class="fileinput-exists"><span class="fui-gear"></span>&nbsp;&nbsp;Change</span>
+									<input type="file" name="csv" id="csv">
 								</span>
 								<span class="fileinput-filename"></span>
-								<a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
-						  </div>
-			          </div>
+								<a href="#" class="close fileinput-exists" data-dismiss="fileinput"
+									style="float: none">&times;</a>
+							</div>
+						</div>
 					</div>
 
-					
-			          <div class="col-xs-5">
+
+					<div class="col-xs-5">
 						<button class="btn btn-sm btn-p202 btn-block" type="submit">Upload Report</button>
 					</div>
-			          
+
 				</form>
 			</div>
 		</div>

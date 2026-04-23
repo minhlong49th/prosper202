@@ -15,16 +15,19 @@ include_once(substr(__DIR__, 0,-30) . '/202-config/connect.php');
 		
 	
 //get stuff
-	$command = "SELECT 2c.click_id, 2c.click_time, 2c.click_alp, text_ad_name, aff_campaign_name, aff_campaign_id_public, landing_page_nickname, ppc_network_name, ppc_account_name, ip_address, keyword, 2c.click_out, click_lead, click_filtered, click_id_public, click_cloaking, 2c.click_referer_site_url_id, click_landing_site_url_id, click_outbound_site_url_id, click_cloaking_site_url_id, click_redirect_site_url_id,	2b.browser_name, 2p.platform_name, 2d.device_name, 202_device_types.type_name, 2cy.country_name, 2cy.country_code, 2rg.region_name, 202_locations_city.city_name, 2is.isp_name, 
+	$command = "SELECT 2c.click_id, 2c.click_time, 2c.click_alp, text_ad_name, aff_campaign_name, aff_campaign_id_public, landing_page_nickname, ppc_network_name, ppc_account_name, ip_address, keyword, 2c.click_out, 2c.click_lead, 2c.click_filtered, 2c.click_id_public, 2c.click_cloaking, 2c.click_referer_site_url_id, 2c.click_landing_site_url_id, 2c.click_outbound_site_url_id, 2c.click_cloaking_site_url_id, 2c.click_redirect_site_url_id,	2b.browser_name, 2p.platform_name, 2d.device_name, 202_device_types.type_name, 2cy.country_name, 2cy.country_code, 2rg.region_name, 202_locations_city.city_name, 2is.isp_name, 
 2su.site_url_address AS referer,2sd.site_domain_host AS referer_host,
 2cl.site_url_address AS landing,2cld.site_domain_host AS landing_host,
 2co.site_url_address AS outbound,2cod.site_domain_host AS outbound_host,
 2cc.site_url_address AS cloaking,2ccd.site_domain_host AS cloaking_host,
 2credir.site_url_address AS redirect,2credird.site_domain_host AS redirect_host,
+2c.income,
+2clk.click_order_date,
 gclid,
 2uca.utm_campaign,2uco.utm_content,2um.utm_medium,2us.utm_source,2ut.utm_term
 FROM 202_dataengine AS 2c
 LEFT JOIN 202_clicks_record USING (click_id) 
+LEFT JOIN 202_clicks AS 2clk ON (2clk.click_id = 2c.click_id)
 LEFT JOIN 202_clicks_site AS 2cs ON (2c.click_id = 2cs.click_id) 
 LEFT JOIN 202_aff_campaigns AS 2ac ON (2c.aff_campaign_id = 2ac.aff_campaign_id) 
 LEFT JOIN 202_ppc_accounts AS 2pa ON (2c.ppc_account_id = 2pa.ppc_account_id)
@@ -93,6 +96,8 @@ LEFT JOIN 202_utm_term AS 2ut ON (2g.utm_term_id = 2ut.utm_term_id) ";
 			"Cloaked Referer" . "\t" . 
 			"Redirect" . "\t" . 
 			"Keyword" . "\t" .
+			"Income" . "\t" .
+			"Order Date" . "\t" .
 	        "gclid" . "\t" .
 	        "utm_campaign" . "\t" .
 	        "utm_content" . "\t" .
@@ -157,6 +162,7 @@ LEFT JOIN 202_utm_term AS 2ut ON (2g.utm_term_id = 2ut.utm_term_id) ";
 		$html['ip_address'] = htmlentities((string)($click_row['ip_address'] ?? ''), ENT_QUOTES, 'UTF-8');
 		$html['isp_name'] = htmlentities((string)($click_row['isp_name'] ?? ''), ENT_QUOTES, 'UTF-8');
 		$html['click_cpc'] = htmlentities((string) dollar_format($click_row['click_cpc'] ?? 0), ENT_QUOTES, 'UTF-8');
+		$html['click_payout'] = htmlentities((string) dollar_format($click_row['income'] ?? 0), ENT_QUOTES, 'UTF-8');
 		$html['keyword'] = htmlentities((string)($click_row['keyword'] ?? ''), ENT_QUOTES, 'UTF-8');
 		$html['click_lead'] = htmlentities((string)($click_row['click_lead'] ?? ''), ENT_QUOTES, 'UTF-8');
 		$html['click_filtered'] = htmlentities((string)($click_row['click_filtered'] ?? ''), ENT_QUOTES, 'UTF-8');      
@@ -203,6 +209,8 @@ LEFT JOIN 202_utm_term AS 2ut ON (2g.utm_term_id = 2ut.utm_term_id) ";
 			$html['cloaking'] . "\t" . 
 			$html['redirect'] . "\t" . 
 			$html['keyword'] . "\t" .
+			$html['click_payout'] . "\t" .
+			($click_row['click_order_date'] ?? '') . "\t" .
 			($click_row['gclid'] ?? '') . "\t" .
 			($click_row['utm_campaign'] ?? '') . "\t" .
 			($click_row['utm_content'] ?? '') . "\t" .
